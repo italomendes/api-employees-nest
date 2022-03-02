@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.userRepository._create(createUserDto);
+    await this.userRepository.save(user);
+    return this.removePassHash([user]);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    const users = await this.userRepository.find();
+    return this.removePassHash(users);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne(id);
+    return this.removePassHash([user]);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: string, updateUserDto: UpdateUserDto) {
+    return this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    return this.userRepository.delete(id);
+  }
+
+  listByDepartment(departmentId: string) {
+    return this.userRepository.listByDepartment(departmentId);
+  }
+
+  removePassHash(users: User[]) {
+    return users.map((user) => {
+      delete user.passhash;
+      return user;
+    });
   }
 }
