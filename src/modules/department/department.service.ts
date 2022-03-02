@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { DepartmentRepository } from './department.repository';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
 
 @Injectable()
 export class DepartmentService {
+  constructor(private readonly departmentRepository: DepartmentRepository) {}
   create(createDepartmentDto: CreateDepartmentDto) {
-    return 'This action adds a new department';
+    const department = this.departmentRepository.create(createDepartmentDto);
+    return this.departmentRepository.save(department);
   }
 
   findAll() {
-    return `This action returns all department`;
+    return this.departmentRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} department`;
+  findOne(id: string) {
+    return this.departmentRepository.findOne(id);
   }
 
-  update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
-    return `This action updates a #${id} department`;
+  update(id: string, updateDepartmentDto: UpdateDepartmentDto) {
+    return this.departmentRepository.update(id, updateDepartmentDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} department`;
+  remove(id: string) {
+    return this.departmentRepository.delete(id);
+  }
+
+  listByCostCenter(costCenterId: string) {
+    return this.departmentRepository.listByCostCenter(costCenterId);
   }
 }
