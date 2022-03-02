@@ -1,0 +1,38 @@
+version: '3.5'
+
+services:
+  app_api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: employees-api-dev:0.0.1
+    container_name: employees-api-dev
+    depends_on:
+      - pgsql
+    networks:
+      - test
+    ports:
+      - 3000:3000
+      - 9229:9229
+
+  pgsql:
+    container_name: pgsql-employees
+    image: postgres:11.2-alpine
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpassword
+      POSTGRES_DB: employees
+    ports:
+      - 5432:5432
+    networks:
+      - test
+
+  adminer:
+    image: adminer
+    networks:
+      - test
+    ports:
+      - 8080:8080
+
+networks:
+  test:
