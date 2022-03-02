@@ -1,1 +1,6 @@
-export class CreateCostCenterDto {}
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateCostCenterDto {
+  @ApiProperty()
+  name: string;
+}
